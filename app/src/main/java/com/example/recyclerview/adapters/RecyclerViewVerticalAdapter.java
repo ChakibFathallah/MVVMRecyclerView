@@ -1,4 +1,4 @@
-package com.example.recyclerview.Adapter;
+package com.example.recyclerview.adapters;
 
 import android.content.Context;
 import android.util.Log;
@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.recyclerview.R;
+import com.example.recyclerview.models.NicePlace;
 
 import java.util.ArrayList;
 
@@ -22,15 +23,19 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class RecyclerViewVerticalAdapter extends RecyclerView.Adapter<RecyclerViewVerticalAdapter.ViewHolder>{
     private static final String TAG = "RecyclerViewVerticalAdapter";
 
-    private ArrayList<String> mImageNames = new ArrayList<>();
-    private ArrayList<String> mImages = new ArrayList<>();
+    //private ArrayList<String> mImageNames = new ArrayList<>();
+    //private ArrayList<String> mImages = new ArrayList<>();
+
+    private ArrayList<NicePlace> nicePlacesList ;
     private Context mContext;
+    private NicePlace currentPlace;
+
     //save the individual item in memory and then will only show the ones that are visible to the user so that  helps to improve performance
-    public RecyclerViewVerticalAdapter
-    (Context mContext, ArrayList<String> mImageNames, ArrayList<String> mImages) {
-        this.mImageNames = mImageNames;
-        this.mImages = mImages;
+    public RecyclerViewVerticalAdapter(Context mContext, ArrayList<NicePlace> nicePlacesList) {
+        //this.mImageNames = mImageNames;
+        //this.mImages = mImages;
         this.mContext = mContext;
+        this.nicePlacesList = nicePlacesList;
     }
 
     //responsible for inflating the view  (view holder class responsible for holding the widgets in memory)
@@ -46,20 +51,21 @@ public class RecyclerViewVerticalAdapter extends RecyclerView.Adapter<RecyclerVi
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
         Log.d(TAG, "onBindViewHolder: called.");
+         currentPlace = nicePlacesList.get(position);
 
         Glide.with(mContext)
                 .asBitmap()
-                .load(mImages.get(position))
+                .load(currentPlace.getImage())
                 .into(holder.image);
 
-        holder.imageName.setText(mImageNames.get(position));
+        holder.imageName.setText(currentPlace.getName());
 
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "onClick: " + mImageNames.get(position) );
+                Log.d(TAG, "onClick: " + currentPlace.getImage() );
 
-                Toast.makeText(mContext, mImageNames.get(position), Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, currentPlace.getName(), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -67,7 +73,7 @@ public class RecyclerViewVerticalAdapter extends RecyclerView.Adapter<RecyclerVi
 
     @Override
     public int getItemCount() {
-        return mImageNames.size();
+        return nicePlacesList.size();
     }
 
     //THE WIDGETS ARE SAVED IN MEMORY IN VIEWHOLDER CLASS SO TO REFERNCE THEM  WE NEED TO REF THE VIEW HOLDER WHICH IS PASSED THROUGH THE CONSTRUCTOR
