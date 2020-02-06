@@ -17,6 +17,7 @@ import com.example.recyclerview.R;
 import com.example.recyclerview.models.NicePlace;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -26,12 +27,12 @@ public class RecyclerViewVerticalAdapter extends RecyclerView.Adapter<RecyclerVi
     //private ArrayList<String> mImageNames = new ArrayList<>();
     //private ArrayList<String> mImages = new ArrayList<>();
 
-    private ArrayList<NicePlace> nicePlacesList ;
+    private List<NicePlace> nicePlacesList ;
     private Context mContext;
     private NicePlace currentPlace;
 
     //save the individual item in memory and then will only show the ones that are visible to the user so that  helps to improve performance
-    public RecyclerViewVerticalAdapter(Context mContext, ArrayList<NicePlace> nicePlacesList) {
+    public RecyclerViewVerticalAdapter(Context mContext, List<NicePlace> nicePlacesList) {
         //this.mImageNames = mImageNames;
         //this.mImages = mImages;
         this.mContext = mContext;
