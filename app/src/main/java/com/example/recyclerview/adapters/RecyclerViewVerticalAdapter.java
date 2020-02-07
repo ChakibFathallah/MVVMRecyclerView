@@ -24,17 +24,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class RecyclerViewVerticalAdapter extends RecyclerView.Adapter<RecyclerViewVerticalAdapter.ViewHolder>{
     private static final String TAG = "RecyclerViewVerticalAdapter";
 
-    //private ArrayList<String> mImageNames = new ArrayList<>();
-    //private ArrayList<String> mImages = new ArrayList<>();
-
     private List<NicePlace> nicePlacesList ;
     private Context mContext;
     private NicePlace currentPlace;
 
     //save the individual item in memory and then will only show the ones that are visible to the user so that  helps to improve performance
     public RecyclerViewVerticalAdapter(Context mContext, List<NicePlace> nicePlacesList) {
-        //this.mImageNames = mImageNames;
-        //this.mImages = mImages;
         this.mContext = mContext;
         this.nicePlacesList = nicePlacesList;
     }

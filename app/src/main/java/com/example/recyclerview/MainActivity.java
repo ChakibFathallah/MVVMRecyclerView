@@ -7,7 +7,6 @@ import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -33,6 +32,12 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.fab)
     FloatingActionButton fab;
 
+    @BindView(R.id.recycler_view_horizental)
+    RecyclerView recyclerViewHorizental;
+
+    @BindView(R.id.recycler_view_vertical)
+    RecyclerView recyclerViewVertical;
+
 
     private ArrayList<NicePlace> nicePlacesList;
     private MainActivityViewModel mMainActivityViewModel;
@@ -50,6 +55,8 @@ public class MainActivity extends AppCompatActivity {
 
         mMainActivityViewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
 
+        mMainActivityViewModel.init();
+
         mMainActivityViewModel.getNicePlaces().observe(this, new Observer<List<NicePlace>>() {
             @Override
             public void onChanged(List<NicePlace> nicePlaces) {
@@ -59,44 +66,47 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        mMainActivityViewModel.getIsLoading().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                if (aBoolean) {
+                    showProgressBar();
+                } else {
+                    hideProgressBar();
+                    recyclerViewHorizental.smoothScrollToPosition(mMainActivityViewModel.getNicePlaces().getValue().size() - 1);
+                    recyclerViewVertical.smoothScrollToPosition(mMainActivityViewModel.getNicePlaces().getValue().size() - 1);
+                }
+            }
+        });
 
-        initImageBitmaps();
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mMainActivityViewModel.addNewValue(new NicePlace("Washington","https://i.imgur.com/ZcLLrkY.jpg"));
+            }
+        });
+
+
         initRecyclerViewVertical();
         initRecyclerViewHorizental();
 
 
     }
 
-    private void initImageBitmaps() {
-        Log.d(TAG, "initImageBitmaps: preparing bitmaps");
-
-        nicePlacesList.add(new NicePlace("Havasu Falls", "https://c1.staticflickr.com/5/4636/25316407448_de5fbf183d_o.jpg"));
-        nicePlacesList.add(new NicePlace("Trondheim", "https://i.redd.it/tpsnoz5bzo501.jpg"));
-        nicePlacesList.add(new NicePlace("Portugal", "https://i.redd.it/qn7f9oqu7o501.jpg"));
-        nicePlacesList.add(new NicePlace("Rocky Mountain National Park", "https://i.redd.it/j6myfqglup501.jpg"));
-        nicePlacesList.add(new NicePlace("Mahahual", "https://i.redd.it/0h2gm1ix6p501.jpg"));
-        nicePlacesList.add(new NicePlace("Frozen Lake", "https://i.redd.it/k98uzl68eh501.jpg"));
-        nicePlacesList.add(new NicePlace("White Sands Desert", "https://i.redd.it/glin0nwndo501.jpg"));
-        nicePlacesList.add(new NicePlace("Austrailia", "https://i.redd.it/obx4zydshg601.jpg"));
-        nicePlacesList.add(new NicePlace("Washington", "https://i.imgur.com/ZcLLrkY.jpg"));
-
-    }
 
     private void initRecyclerViewVertical() {
         Log.d(TAG, "initRecyclerView: init recyclerView");
-        RecyclerView recyclerView = findViewById(R.id.recycler_view);
         adapterVertical = new RecyclerViewVerticalAdapter(this, mMainActivityViewModel.getNicePlaces().getValue());
-        recyclerView.setAdapter(adapterVertical);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewVertical.setAdapter(adapterVertical);
+        recyclerViewVertical.setLayoutManager(new LinearLayoutManager(this));
     }
 
     private void initRecyclerViewHorizental() {
         Log.d(TAG, "initRecyclerView: init recyclerView");
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        RecyclerView recyclerView = findViewById(R.id.recycler_view_horizental);
-        recyclerView.setLayoutManager(layoutManager);
-        adapterHorizental = new RecyclerViewHorizentalAdapter(this, nicePlacesList);
-        recyclerView.setAdapter(adapterHorizental);
+        recyclerViewHorizental.setLayoutManager(layoutManager);
+        adapterHorizental = new RecyclerViewHorizentalAdapter(this, mMainActivityViewModel.getNicePlaces().getValue());
+        recyclerViewHorizental.setAdapter(adapterHorizental);
 
     }
 
@@ -104,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
     }
 
-    private void hideProgressBar(){
+    private void hideProgressBar() {
         progressBar.setVisibility(View.GONE);
     }
 }
